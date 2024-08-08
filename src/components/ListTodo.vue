@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ItemTodo from "./ItemTodo.vue";
 import IconLoading from "./Icon/IconLoading.vue";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 
 type Item = {
   id: string;

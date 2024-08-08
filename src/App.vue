@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { apiService } from "./apiService";
 import Header from "./components/HeaderTodo.vue";
 import Footer from "./components/FooterTodo.vue";
@@ -23,7 +23,7 @@ const loading = ref<boolean>(true);
 const countCompleted = ref<number>(0);
 const countTodo = ref<number>(0);
 
-async function fetchData() {
+onMounted(async () => {
   try {
     const data = await apiService.getItems();
     items.value = data;
@@ -31,13 +31,12 @@ async function fetchData() {
     data.map((item: { completed: boolean }) =>
       item.completed ? countCompleted.value++ : ""
     );
-  } catch {
-    console.log("Error fetching data");
+  } catch (error) {
+    console.log(error);
   } finally {
     loading.value = false;
   }
-}
-onMounted(fetchData);
+});
 
 const handleUpdateItems = (updatedItems: Item[]) => {
   items.value = updatedItems;

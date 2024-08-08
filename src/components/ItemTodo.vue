@@ -2,7 +2,7 @@
 import ActionTodo from "./ActionTodo.vue";
 import IconUnChecked from "./Icon/IconUnChecked.vue";
 import IconChecked from "./Icon/IconChecked.vue";
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import { apiService } from "../apiService";
 
 type Item = {
@@ -50,16 +50,7 @@ const handleChecked = async () => {
     console.log("Error fetching data");
   }
 };
-const handleChangeHeading = (event: Event) => {
-  const target = event.target as HTMLElement;
-  const dataId = target.getAttribute("data-id");
-  try {
-    apiService.updateItem(dataId, item);
-  } catch {
-    console.log("Error fetching data");
-  }
-};
-const handleChangeDescription = (event: Event) => {
+const handleChange = (event: Event) => {
   const target = event.target as HTMLElement;
   const dataId = target.getAttribute("data-id");
   try {
@@ -89,7 +80,7 @@ const handleChangeDescription = (event: Event) => {
           ]"
           :data-id="item.id"
           @input="autoResize"
-          @change="handleChangeHeading"
+          @change="handleChange"
         />
         <textarea
           v-if="item.hide_description"
@@ -103,7 +94,7 @@ const handleChangeDescription = (event: Event) => {
           ]"
           :data-id="item.id"
           @input="autoResize"
-          @change="handleChangeDescription"
+          @change="handleChange"
         />
       </div>
     </div>
