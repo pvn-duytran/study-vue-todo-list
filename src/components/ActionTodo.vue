@@ -1,57 +1,30 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import IconDown from "./Icon/IconDown.vue";
 import IconMenu from "./Icon/IconMenu.vue";
 import IconUp from "./Icon/IconUp.vue";
-import { apiService } from "../apiService";
+import { useTodoStore } from "@/stores/TodoStore";
 
-type Item = {
-  id: string;
-  name: string;
-  completed: boolean;
-  hide_description: boolean;
-  description: string;
-};
-
-const props = defineProps<{
-  items: Item[];
-  item: Item;
-  index: number;
-  max: number;
-  getDetail: (updatedItems: Item, index: number) => void;
-  handleActivePopup: (updatedItem: boolean) => void;
-}>();
-
+const TodoStore = useTodoStore();
 const styleButton = ref<string>(
   "cursor-pointer p-[10px] rounded-[5px] transition-all hover:bg-gray-200"
 );
+const max = ref<number>(TodoStore.todos.length - 1);
+const props = defineProps<{
+  id: string;
+  index: number;
+}>();
+const handleDetails = () => {
+  TodoStore.activePopup = true;
+  TodoStore.getDetailTodo(props.id);
+};
 
-const handleMoveDown = (index: number) => {
-  if (index != props.max) {
-    [props.items[index], props.items[index + 1]] = [
-      props.items[index + 1],
-      props.items[index],
-    ];
+watch(
+  () => TodoStore.filtersTodo,
+  (newValue) => {
+    max.value = newValue.length - 1;
   }
-};
-const handleMoveUp = (index: number) => {
-  if (index != 0) {
-    [props.items[index], props.items[index - 1]] = [
-      props.items[index - 1],
-      props.items[index],
-    ];
-  }
-};
-const handleDetail = async (id: string, index: number) => {
-  try {
-    const data = await apiService.getItem(id);
-    props.getDetail(data, index);
-  } catch (error) {
-    console.log(error);
-  } finally {
-    props.handleActivePopup(true);
-  }
-};
+);
 </script>
 
 <template>
@@ -61,22 +34,20 @@ const handleDetail = async (id: string, index: number) => {
         styleButton,
         index == 0 ? 'opacity-30 !cursor-not-allowed hover:bg-white' : '',
       ]"
-      :disabled="index == 0"
-      @click="handleMoveUp(index)"
+      @click="TodoStore.moveUp(index)"
     >
       <IconUp width="15px" />
     </button>
     <button
       :class="[
         styleButton,
-        index == max - 1 ? 'opacity-30 !cursor-not-allowed hover:bg-white' : '',
+        index == max ? 'opacity-30 !cursor-not-allowed hover:bg-white' : '',
       ]"
-      :disabled="index == max - 1"
-      @click="handleMoveDown(index)"
+      @click="TodoStore.moveDown(index)"
     >
       <IconDown width=" 15px" />
     </button>
-    <button :class="styleButton" @click="handleDetail(item.id, index)">
+    <button :class="styleButton" @click="handleDetails">
       <IconMenu width="15px" />
     </button>
   </div>
