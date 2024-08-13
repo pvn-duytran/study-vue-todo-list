@@ -9,20 +9,24 @@ const TodoStore = useTodoStore();
 const styleButton = ref<string>(
   "cursor-pointer p-[10px] rounded-[5px] transition-all hover:bg-gray-200"
 );
-const max = ref<number>(TodoStore.todos.length - 1);
+const max = ref<number>(TodoStore.countTodos - 1);
 const props = defineProps<{
   id: string;
   index: number;
 }>();
 const handleDetails = () => {
-  TodoStore.activePopup = true;
+  TodoStore.activePopup = !TodoStore.activePopup;
+  TodoStore.activeForm = false;
   TodoStore.getDetailTodo(props.id);
 };
 
 watch(
-  () => TodoStore.filtersTodo,
+  () => TodoStore.todos,
   (newValue) => {
     max.value = newValue.length - 1;
+  },
+  {
+    deep: true,
   }
 );
 </script>

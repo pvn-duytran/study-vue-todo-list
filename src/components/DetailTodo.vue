@@ -22,21 +22,8 @@ watch(
     detailTodo.value = newValue;
   }
 );
-const handleDelete = () => {
-  TodoStore.deleteTodo(detailTodo.value.id);
-  TodoStore.activePopup = false;
-};
-const handleClose = () => {
-  TodoStore.activePopup = false;
-};
-const handleMoveUp = () => {
-  TodoStore.moveUp(TodoStore.detailsIndex);
-};
-const handleMoveDown = () => {
-  TodoStore.moveDown(TodoStore.detailsIndex);
-};
 watch(
-  () => TodoStore.filtersTodo,
+  () => TodoStore.todos,
   (newValue) => {
     newValue.find((todo: Todo, index: number) => {
       if (todo.id == detailTodo.value.id) {
@@ -48,6 +35,32 @@ watch(
     deep: true,
   }
 );
+const handleDelete = () => {
+  TodoStore.deleteTodo(detailTodo.value.id);
+  TodoStore.activePopup = false;
+};
+
+const handleMoveUp = () => {
+  TodoStore.moveUp(TodoStore.detailsIndex);
+};
+const handleMoveDown = () => {
+  TodoStore.moveDown(TodoStore.detailsIndex);
+};
+const handleDescription = () => {
+  detailTodo.value.hide_description = !detailTodo.value.hide_description;
+  TodoStore.updateTodo(detailTodo.value.id, detailTodo.value);
+};
+const handleDuplicate = async () => {
+  const newData = {
+    ...detailTodo.value,
+    id: (TodoStore.todos.length + 1).toString(),
+  };
+  await TodoStore.createTodo(
+    newData,
+    "Todo duplicated successfully!!",
+    "success"
+  );
+};
 </script>
 
 <template>
@@ -56,7 +69,11 @@ watch(
   >
     <div class="flex items-center p-[20px] justify-between">
       <h3>Task: {{ detailTodo.name }}</h3>
-      <IconClose @click="handleClose" class="cursor-pointer" width="15px" />
+      <IconClose
+        @click="TodoStore.activePopup = false"
+        class="cursor-pointer"
+        width="15px"
+      />
     </div>
     <ul class="border-y border-solid border-[#b6b5b5]">
       <li
@@ -81,8 +98,13 @@ watch(
       >
         Move Down
       </li>
-      <li :class="customStyle">Show description</li>
-      <li :class="customStyle">Duplicate</li>
+      <li :class="customStyle" @click="handleDescription">
+        <template v-if="detailTodo.hide_description">
+          Show description
+        </template>
+        <template v-else> Hide description </template>
+      </li>
+      <li :class="customStyle" @click="handleDuplicate">Duplicate</li>
     </ul>
     <div class="flex items-center p-[20px] justify-between">
       <h3 class="text-red-600 cursor-pointer" @click="handleDelete">

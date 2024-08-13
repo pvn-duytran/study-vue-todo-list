@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { apiService } from "../apiService";
+import { useNotification } from "@kyvg/vue3-notification";
 
 type Todo = {
   id: string;
@@ -13,13 +14,15 @@ export const useTodoStore = defineStore({
   state: (): {
     todos: Todo[];
     activePopup: boolean;
+    activeForm: boolean;
     filters: boolean;
     detailsTodo: Todo;
     detailsIndex: number;
   } => ({
     todos: [],
     activePopup: false,
-    filters: true,
+    activeForm: false,
+    filters: false,
     detailsTodo: {} as Todo,
     detailsIndex: 0,
   }),
@@ -29,17 +32,6 @@ export const useTodoStore = defineStore({
     },
     countCompleted() {
       return this.todos.filter((todo: Todo) => todo.completed).length;
-    },
-    filtersTodo() {
-      console.log("filtersTodo");
-      console.log(this.filters);
-      if (this.filters) {
-        console.log("true");
-        return this.todos;
-      } else {
-        console.log("false");
-        return this.todos.filter((todo: Todo) => !todo.completed);
-      }
     },
   },
   actions: {
@@ -58,6 +50,31 @@ export const useTodoStore = defineStore({
         console.error(error);
       }
     },
+    async deleteTodo(id: string) {
+      try {
+        const data = await apiService.deleteItem(id);
+        this.todos = this.todos.filter((todo: Todo) => todo.id != id);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async createTodo(data: Todo, title: string, type: string) {
+      try {
+        const response = await apiService.createItem(data);
+        this.todos.push(response);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.activeForm = false;
+        this.activePopup = false;
+        useNotification().notify({
+          title: title,
+          type: type,
+          speed: 1000,
+          duration: 2000,
+        });
+      }
+    },
     getDetailTodo(id: string) {
       this.todos.find((todo: Todo, index: number) => {
         if (todo.id == id) {
@@ -66,34 +83,28 @@ export const useTodoStore = defineStore({
       });
       this.detailsTodo = this.todos.find((todo: Todo) => todo.id == id);
     },
-    async deleteTodo(id: string) {
-      try {
-        await apiService.deleteItem(id);
-        this.todos = this.todos.filter((todo: Todo) => todo.id != id);
-      } catch (error) {
-        console.error(error);
-      }
-    },
     moveUp(index: number) {
       if (index > 0) {
-        [this.filtersTodo[index], this.filtersTodo[index - 1]] = [
-          this.filtersTodo[index - 1],
-          this.filtersTodo[index],
+        [this.todos[index], this.todos[index - 1]] = [
+          this.todos[index - 1],
+          this.todos[index],
         ];
-        console.log("moveUp");
       }
-      console.log(this.filtersTodo);
-      console.log("moveUp1");
     },
     moveDown(index: number) {
-      if (index < this.filtersTodo.length - 1) {
-        [this.filtersTodo[index], this.filtersTodo[index + 1]] = [
-          this.filtersTodo[index + 1],
-          this.filtersTodo[index],
+      if (index < this.todos.length - 1) {
+        [this.todos[index], this.todos[index + 1]] = [
+          this.todos[index + 1],
+          this.todos[index],
         ];
-        console.log("moveDown");
       }
-      console.log("moveDown1");
+    },
+    filtersTodos() {
+      if (this.filters) {
+        this.todos = this.todos.filter((todo: Todo) => !todo.completed);
+      } else {
+        this.getTodos();
+      }
     },
   },
 });

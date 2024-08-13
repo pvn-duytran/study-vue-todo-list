@@ -2,5 +2,11 @@ import "./assets/main.css";
 import { createPinia } from "pinia";
 import { createApp } from "vue";
 import App from "./App.vue";
+import Notifications from "@kyvg/vue3-notification";
 
-createApp(App).use(createPinia()).mount("#app");
+const app = createApp(App);
+
+app.use(createPinia());
+app.use(Notifications);
+
+app.mount("#app");

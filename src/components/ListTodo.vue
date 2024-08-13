@@ -16,20 +16,13 @@ const TodoStore = useTodoStore();
 const loading = ref<boolean>(true);
 const todos = ref<Todo[]>([]);
 onMounted(async () => {
-  console.log("ooooo");
-  try {
-    await TodoStore.getTodos();
-  } catch (error) {
-    console.error("Failed to fetch products:", error);
-  } finally {
-    loading.value = false;
-  }
+  await TodoStore.getTodos();
+  loading.value = false;
 });
+
 watch(
-  () => TodoStore.filtersTodo,
+  () => TodoStore.todos,
   (newValue) => {
-    console.log("oo");
-    console.log(newValue);
     todos.value = newValue;
   },
   {
@@ -39,8 +32,6 @@ watch(
 </script>
 
 <template>
-  {{ TodoStore.todos }}
-
   <ul class="p-[20px] pr-[10px] border-y border-solid border-[#b6b5b5]">
     <li v-if="loading" class="text-center">
       <IconLoading width="30px" class="m-auto" />

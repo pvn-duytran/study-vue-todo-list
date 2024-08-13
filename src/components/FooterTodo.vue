@@ -6,8 +6,12 @@ import { useTodoStore } from "@/stores/TodoStore";
 
 const TodoStore = useTodoStore();
 const toggleFilters = () => {
-  console.log("toggleFilters");
   TodoStore.filters = !TodoStore.filters;
+  TodoStore.filtersTodos();
+};
+const handleActiveForm = () => {
+  TodoStore.activeForm = !TodoStore.activeForm;
+  TodoStore.activePopup = false;
 };
 </script>
 
@@ -23,6 +27,7 @@ const toggleFilters = () => {
     </button>
     <button
       class="flex items-center gap-[10px] rounded p-[5px_10px] transition-all hover:bg-gray-200"
+      @click="handleActiveForm"
     >
       <IconPlus width="15px" height="15px" />
       Add task

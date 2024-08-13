@@ -37,7 +37,12 @@ const handleChecked = () => {
         <IconChecked v-if="todo.completed" width="20px" height="20px" />
         <IconUnChecked v-else width="20px" height="20px" />
       </button>
-      <div class="grid w-full">{{ todo.name }}</div>
+      <div class="grid w-full">
+        {{ todo.name }}
+        <p v-if="!todo.hide_description" class="text-sm">
+          {{ todo.description }}
+        </p>
+      </div>
     </div>
     <ActionTodo :index="index" :id="id" />
   </li>
