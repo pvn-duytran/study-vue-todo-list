@@ -4,6 +4,7 @@ import IconDown from "./Icon/IconDown.vue";
 import IconMenu from "./Icon/IconMenu.vue";
 import IconUp from "./Icon/IconUp.vue";
 import { useTodoStore } from "@/stores/TodoStore";
+import IconEdit from "./Icon/IconEdit.vue";
 
 const TodoStore = useTodoStore();
 const styleButton = ref<string>(
@@ -19,9 +20,15 @@ const handleDetails = () => {
   TodoStore.activeForm = false;
   TodoStore.getDetailTodo(props.id);
 };
+const handleEdit = () => {
+  TodoStore.activeForm = true;
+  TodoStore.activePopup = false;
+  TodoStore.isEdit = true;
+  TodoStore.getDetailTodo(props.id);
+};
 
 watch(
-  () => TodoStore.todos,
+  () => TodoStore.filteredTodos,
   (newValue) => {
     max.value = newValue.length - 1;
   },
@@ -38,6 +45,7 @@ watch(
         styleButton,
         index == 0 ? 'opacity-30 !cursor-not-allowed hover:bg-white' : '',
       ]"
+      :data-index="index"
       @click="TodoStore.moveUp(index)"
     >
       <IconUp width="15px" />
@@ -47,12 +55,16 @@ watch(
         styleButton,
         index == max ? 'opacity-30 !cursor-not-allowed hover:bg-white' : '',
       ]"
+      :data-index="index"
       @click="TodoStore.moveDown(index)"
     >
       <IconDown width=" 15px" />
     </button>
     <button :class="styleButton" @click="handleDetails">
       <IconMenu width="15px" />
+    </button>
+    <button :class="styleButton" @click="handleEdit">
+      <IconEdit width="15px" />
     </button>
   </div>
 </template>

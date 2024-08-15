@@ -70,58 +70,50 @@ watch(
 );
 </script>
 <template>
-  <div
-    class="fixed inset-x-0 m-auto max-w-[400px] top-[100px] shadow-md z-10 bg-white"
-  >
-    <IconClose
-      class="cursor-pointer absolute top-[10px] right-[10px]"
-      width="15px"
-      @click="TodoStore.activeForm = false"
-    />
-    <form @submit.prevent="submitTodo" class="p-5">
-      <div class="mb-4">
-        <label for="text" class="block text-sm font-medium text-gray-700"
-          >Text</label
-        >
-        <input
-          type="text"
-          id="text"
-          name="text"
-          v-model="formData.name"
-          class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
-          :class="{
-            'focus:ring-red-500 focus:border-red-500': !checkValueName,
-            'focus:ring-black focus:border-black': checkValueName,
-          }"
-          placeholder="Enter text"
-        />
-      </div>
+  <form @submit.prevent="submitTodo" class="p-5">
+    <h2 class="text-xl font-bold text-center">ADD</h2>
+    <div class="mb-4">
+      <label for="text" class="block text-sm font-medium text-gray-700"
+        >Text</label
+      >
+      <input
+        type="text"
+        id="text"
+        name="text"
+        v-model="formData.name"
+        class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm"
+        :class="{
+          'focus:ring-red-500 focus:border-red-500': !checkValueName,
+          'focus:ring-black focus:border-black': checkValueName,
+        }"
+        placeholder="Enter text"
+      />
+    </div>
 
-      <div class="mb-4">
-        <label for="description" class="block text-sm font-medium text-gray-700"
-          >Description</label
-        >
-        <textarea
-          id="description"
-          name="description"
-          class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"
-          placeholder="Enter description"
-          :class="{
-            'focus:ring-red-500 focus:border-red-500': !checkValueDescription,
-            'focus:ring-black focus:border-black': checkValueDescription,
-          }"
-          v-model="formData.description"
-        ></textarea>
-      </div>
+    <div class="mb-4">
+      <label for="description" class="block text-sm font-medium text-gray-700"
+        >Description</label
+      >
+      <textarea
+        id="description"
+        name="description"
+        class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+        placeholder="Enter description"
+        :class="{
+          'focus:ring-red-500 focus:border-red-500': !checkValueDescription,
+          'focus:ring-black focus:border-black': checkValueDescription,
+        }"
+        v-model="formData.description"
+      ></textarea>
+    </div>
 
-      <div>
-        <button
-          type="submit"
-          class="w-full px-4 py-2 text-white bg-black rounded-md"
-        >
-          Submit
-        </button>
-      </div>
-    </form>
-  </div>
+    <div>
+      <button
+        type="submit"
+        class="w-full px-4 py-2 text-white bg-black rounded-md"
+      >
+        Submit
+      </button>
+    </div>
+  </form>
 </template>

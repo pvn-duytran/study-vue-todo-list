@@ -2,7 +2,7 @@
 import ItemTodo from "./ItemTodo.vue";
 import IconLoading from "./Icon/IconLoading.vue";
 import { useTodoStore } from "@/stores/TodoStore";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 
 type Todo = {
   id: string;
@@ -19,6 +19,8 @@ onMounted(async () => {
   await TodoStore.getTodos();
   loading.value = false;
 });
+
+const filtersTodo = computed(() => TodoStore.filteredTodos);
 
 watch(
   () => TodoStore.todos,
@@ -38,11 +40,11 @@ watch(
     </li>
     <template v-else>
       <ItemTodo
-        v-for="(todo, index) in todos"
+        v-for="(todo, index) in filtersTodo"
         :todo="todo"
         :index="index"
         :id="todo.id"
-        :key="todo.id"
+        :key="todo.name"
       />
     </template>
   </ul>

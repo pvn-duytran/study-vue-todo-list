@@ -7,11 +7,11 @@ import { useTodoStore } from "@/stores/TodoStore";
 const TodoStore = useTodoStore();
 const toggleFilters = () => {
   TodoStore.filters = !TodoStore.filters;
-  TodoStore.filtersTodos();
 };
 const handleActiveForm = () => {
-  TodoStore.activeForm = !TodoStore.activeForm;
+  TodoStore.activeForm = true;
   TodoStore.activePopup = false;
+  TodoStore.isEdit = false;
 };
 </script>
 
@@ -23,7 +23,7 @@ const handleActiveForm = () => {
     >
       <IconEye v-if="TodoStore.filters" width="20px" height="20px" />
       <IconEyeClose v-else width="20px" height="20px" />
-      Completed {{ TodoStore.countCompleted }} of {{ TodoStore.countTodos }}
+      Completed {{ TodoStore.countCompleted }} of {{ TodoStore.todos.length }}
     </button>
     <button
       class="flex items-center gap-[10px] rounded p-[5px_10px] transition-all hover:bg-gray-200"

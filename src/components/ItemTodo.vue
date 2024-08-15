@@ -2,7 +2,7 @@
 import ActionTodo from "./ActionTodo.vue";
 import IconUnChecked from "./Icon/IconUnChecked.vue";
 import IconChecked from "./Icon/IconChecked.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useTodoStore } from "@/stores/TodoStore";
 
 const TodoStore = useTodoStore();
@@ -28,6 +28,16 @@ const handleChecked = () => {
   };
   TodoStore.updateTodo(todo.value.id, newData);
 };
+
+watch(
+  () => props.todo,
+  (newValue) => {
+    todo.value = newValue;
+  },
+  {
+    deep: true,
+  }
+);
 </script>
 
 <template>

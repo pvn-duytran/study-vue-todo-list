@@ -18,6 +18,7 @@ export const useTodoStore = defineStore({
     filters: boolean;
     detailsTodo: Todo;
     detailsIndex: number;
+    isEdit: boolean;
   } => ({
     todos: [],
     activePopup: false,
@@ -25,6 +26,7 @@ export const useTodoStore = defineStore({
     filters: false,
     detailsTodo: {} as Todo,
     detailsIndex: 0,
+    isEdit: false,
   }),
   getters: {
     countTodos() {
@@ -32,6 +34,12 @@ export const useTodoStore = defineStore({
     },
     countCompleted() {
       return this.todos.filter((todo: Todo) => todo.completed).length;
+    },
+    filteredTodos() {
+      if (this.filters) {
+        return this.todos.filter((todo: Todo) => !todo.completed);
+      }
+      return this.todos;
     },
   },
   actions: {
@@ -45,7 +53,8 @@ export const useTodoStore = defineStore({
     },
     async updateTodo(id: string, data: Todo) {
       try {
-        await apiService.updateItem(id, data);
+        const newData = await apiService.updateItem(id, data);
+        return newData;
       } catch (error) {
         console.error(error);
       }
@@ -85,26 +94,29 @@ export const useTodoStore = defineStore({
     },
     moveUp(index: number) {
       if (index > 0) {
-        [this.todos[index], this.todos[index - 1]] = [
-          this.todos[index - 1],
-          this.todos[index],
+        [this.filteredTodos[index], this.filteredTodos[index - 1]] = [
+          this.filteredTodos[index - 1],
+          this.filteredTodos[index],
         ];
+        this.syncTodosWithFiltered();
       }
     },
     moveDown(index: number) {
-      if (index < this.todos.length - 1) {
-        [this.todos[index], this.todos[index + 1]] = [
-          this.todos[index + 1],
-          this.todos[index],
+      if (index < this.filteredTodos.length - 1) {
+        [this.filteredTodos[index], this.filteredTodos[index + 1]] = [
+          this.filteredTodos[index + 1],
+          this.filteredTodos[index],
         ];
+        this.syncTodosWithFiltered();
       }
     },
-    filtersTodos() {
-      if (this.filters) {
-        this.todos = this.todos.filter((todo: Todo) => !todo.completed);
-      } else {
-        this.getTodos();
-      }
+    syncTodosWithFiltered() {
+      const remainingTodos: Todo[] = this.todos.filter((todo: Todo) =>
+        this.filteredTodos.every(
+          (filteredTodo: Todo) => filteredTodo.id !== todo.id
+        )
+      );
+      this.todos = [...remainingTodos, ...this.filteredTodos];
     },
   },
 });
