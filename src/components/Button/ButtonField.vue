@@ -7,7 +7,7 @@ const props = defineProps<{
   type?: "button" | "submit" | "reset";
   size?: "small" | "medium" | "large";
   disabled?: boolean;
-  to?: string; // Thêm prop 'to' cho router-link
+  to?: string;
 }>();
 
 const defaultProps = {
@@ -81,7 +81,6 @@ const buttonClass = computed(() => [
   padding: 12px 24px;
 }
 
-/* Trạng thái disabled */
 .btn-disabled {
   opacity: 0.6;
   pointer-events: none;
