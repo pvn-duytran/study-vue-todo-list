@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ItemTodo from "./ItemTodo.vue";
-import IconLoading from "./Icon/IconLoading.vue";
+import ItemTodo from "../../components/ItemTodo.vue";
+import IconLoading from "../../components/Icon/IconLoading.vue";
 import { useTodoStore } from "@/stores/TodoStore";
 import { useAuthStore } from "@/stores/AuthStore";
 import { onMounted, ref, watch, computed } from "vue";

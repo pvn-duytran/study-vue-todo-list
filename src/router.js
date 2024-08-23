@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "./components/Home.vue";
-import AddTodo from "./components/AddTodo.vue";
-import EditTodo from "./components/EditTodo.vue";
+import Home from "./pages/home/Home.vue";
+import AddTodo from "./pages/add/AddTodo.vue";
+import EditTodo from "./pages/edit/EditTodo.vue";
 import { ROUTES } from "./config";
-import Register from "./components/Register.vue";
-import Login from "./components/Login.vue";
+import Register from "./pages/register/Register.vue";
+import Login from "./pages/login/Login.vue";
 const routes = [
   { path: ROUTES.HOME, component: Home },
   { path: ROUTES.TODO, component: Home },

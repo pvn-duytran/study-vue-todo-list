@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ButtonField from "./Button/ButtonField.vue";
-import TextField from "./Input/TextField.vue";
+import ButtonField from "../../components/Button/ButtonField.vue";
+import TextField from "../../components/Input/TextField.vue";
 import { auth } from "@/firebaseConfig";
 import { useAuthStore } from "@/stores/AuthStore";
 import { reactive } from "vue";

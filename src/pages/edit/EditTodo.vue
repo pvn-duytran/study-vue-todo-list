@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import TextField from "./Input/TextField.vue";
+import TextField from "../../components/Input/TextField.vue";
 import { onMounted, ref, reactive } from "vue";
 import { useNotification } from "@kyvg/vue3-notification";
 import { useRoute } from "vue-router";
 import { apiService } from "@/apiService";
 import router from "@/router";
-import ButtonField from "./Button/ButtonField.vue";
+import ButtonField from "../../components/Button/ButtonField.vue";
 import { ROUTES } from "@/config";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
