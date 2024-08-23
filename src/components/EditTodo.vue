@@ -1,30 +1,29 @@
 <script setup lang="ts">
-import { useTodoStore } from "@/stores/TodoStore";
-import { reactive } from "vue";
+import TextField from "./Input/TextField.vue";
+import { onMounted, ref, reactive } from "vue";
 import { useNotification } from "@kyvg/vue3-notification";
+import { useRoute } from "vue-router";
 import { apiService } from "@/apiService";
 import router from "@/router";
-import { v4 as uuidv4 } from "uuid";
-import ButtonField from "../../components/Button/ButtonField.vue";
+import ButtonField from "./Button/ButtonField.vue";
 import { ROUTES } from "@/config";
-import TextField from "../../components/Input/TextField.vue";
-import { useAuthStore } from "@/stores/AuthStore";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 
 type Todo = {
   id: string;
-  name: string;
-  completed: boolean;
-  hide_description: boolean;
-  description: string;
+  name?: string;
+  completed?: boolean;
+  hide_description?: boolean;
+  description?: string;
 };
 
+const emit = defineEmits(["submit"]);
+const route = useRoute();
+const id = route.params.id as string | undefined;
 const { notify } = useNotification();
-const TodoStore = useTodoStore();
-const AuthStore = useAuthStore();
-
-const { errors, handleSubmit, defineField } = useForm({
+const formData = ref<Todo>({} as Todo);
+const { errors, handleSubmit, defineField, setValues } = useForm({
   validationSchema: yup.object({
     name: yup.string().min(4).required(),
     description: yup.string().min(7).required(),
@@ -33,41 +32,35 @@ const { errors, handleSubmit, defineField } = useForm({
 const [name, nameAttrs] = defineField("name");
 const [description, descriptionAttrs] = defineField("description");
 
-const formData = reactive<Todo>({
-  id: uuidv4(),
-  name: "",
-  description: "",
-  completed: false,
-  hide_description: true,
+onMounted(async () => {
+  const data = await apiService.getItem(id);
+  formData.value = data;
+  setValues({
+    name: formData.value.name,
+    description: formData.value.description,
+  });
 });
-
-const handleAdd = handleSubmit(async (values) => {
+const handleEdit = handleSubmit(async (values) => {
   const newData = values;
   const data = {
-    ...formData,
-    user_id: AuthStore.currentUser.uid,
+    ...formData.value,
     name: newData.name,
     description: newData.description,
   };
-  try {
-    await apiService.createItem(data);
-    TodoStore.todos.push(data);
-    notify({
-      title: "Success",
-      text: "Todo has been added",
-      type: "success",
-    });
-  } catch (error) {
-    console.log(error);
-  } finally {
-    router.push(ROUTES.TODO);
-  }
+  emit("submit", data);
+  // await apiService.updateItem(id, data);
+  // notify({
+  //   title: "Success",
+  //   text: "Todo has been updated",
+  //   type: "success",
+  // });
+  // router.push(ROUTES.TODO);
 });
 </script>
 <template>
-  <div>
-    <form @submit.prevent="handleAdd" class="p-5">
-      <h2 class="text-xl font-bold text-center">ADD</h2>
+  <div class="">
+    <form @submit.prevent="handleEdit" class="p-5">
+      <h2 class="text-xl font-bold text-center">EDIT</h2>
       <div class="mb-4">
         <TextField
           v-bind="nameAttrs"
@@ -108,8 +101,9 @@ const handleAdd = handleSubmit(async (values) => {
           :to="`${ROUTES.HOME}`"
           size="medium"
           variant="outlined"
-          >Cancel</ButtonField
         >
+          Cancel
+        </ButtonField>
       </div>
     </form>
   </div>
