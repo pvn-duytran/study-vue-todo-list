@@ -2,6 +2,9 @@
 import IconClose from "./Icon/IconClose.vue";
 import { ref, watch } from "vue";
 import { useTodoStore } from "@/stores/TodoStore";
+import { apiService } from "@/apiService";
+import { useNotification } from "@kyvg/vue3-notification";
+import { v4 as uuidv4 } from "uuid";
 
 type Todo = {
   id: string;
@@ -9,8 +12,10 @@ type Todo = {
   completed: boolean;
   hide_description: boolean;
   description: string;
+  user_id: string;
 };
 
+const { notify } = useNotification();
 const TodoStore = useTodoStore();
 const detailTodo = ref<Todo>(TodoStore.detailsTodo);
 const customStyle = ref<string>(
@@ -36,10 +41,12 @@ watch(
   }
 );
 const handleDelete = () => {
-  TodoStore.deleteTodo(detailTodo.value.id);
+  apiService.deleteItem(detailTodo.value.id);
   TodoStore.activePopup = false;
+  TodoStore.todos = TodoStore.todos.filter((todo: Todo) => {
+    return todo.id !== detailTodo.value.id;
+  });
 };
-
 const handleMoveUp = () => {
   TodoStore.moveUp(TodoStore.detailsIndex);
 };
@@ -48,18 +55,20 @@ const handleMoveDown = () => {
 };
 const handleDescription = () => {
   detailTodo.value.hide_description = !detailTodo.value.hide_description;
-  TodoStore.updateTodo(detailTodo.value.id, detailTodo.value);
+  apiService.updateItem(detailTodo.value.id, detailTodo.value);
 };
 const handleDuplicate = async () => {
   const newData = {
     ...detailTodo.value,
-    id: (TodoStore.todos.length + 1).toString(),
+    id: uuidv4(),
   };
-  await TodoStore.createTodo(
-    newData,
-    "Todo duplicated successfully!!",
-    "success"
-  );
+  await apiService.createItem(newData);
+  TodoStore.todos.push(newData);
+  notify({
+    title: "Success",
+    text: "Todo has been added",
+    type: "success",
+  });
 };
 </script>
 

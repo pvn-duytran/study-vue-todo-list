@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+}
+.dark-mode {
+  --background-color: #1e1e1e;
+  --text-color: #ffffff;
+}
+
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;

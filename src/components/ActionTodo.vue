@@ -5,25 +5,19 @@ import IconMenu from "./Icon/IconMenu.vue";
 import IconUp from "./Icon/IconUp.vue";
 import { useTodoStore } from "@/stores/TodoStore";
 import IconEdit from "./Icon/IconEdit.vue";
+import { ROUTES } from "@/config";
+import ButtonField from "./Button/ButtonField.vue";
+import { useDarkModeStore } from "@/stores/DarkModeStore";
 
 const TodoStore = useTodoStore();
-const styleButton = ref<string>(
-  "cursor-pointer p-[10px] rounded-[5px] transition-all hover:bg-gray-200"
-);
+const darkModeStore = useDarkModeStore();
 const max = ref<number>(TodoStore.countTodos - 1);
 const props = defineProps<{
   id: string;
   index: number;
 }>();
 const handleDetails = () => {
-  TodoStore.activePopup = !TodoStore.activePopup;
-  TodoStore.activeForm = false;
-  TodoStore.getDetailTodo(props.id);
-};
-const handleEdit = () => {
-  TodoStore.activeForm = true;
-  TodoStore.activePopup = false;
-  TodoStore.isEdit = true;
+  TodoStore.activePopup = true;
   TodoStore.getDetailTodo(props.id);
 };
 
@@ -40,31 +34,51 @@ watch(
 
 <template>
   <div class="flex items-center">
-    <button
-      :class="[
-        styleButton,
-        index == 0 ? 'opacity-30 !cursor-not-allowed hover:bg-white' : '',
-      ]"
-      :data-index="index"
+    <ButtonField
+      size="small"
+      variant="text"
+      :disabled="index === 0"
       @click="TodoStore.moveUp(index)"
+      :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
     >
-      <IconUp width="15px" />
-    </button>
-    <button
-      :class="[
-        styleButton,
-        index == max ? 'opacity-30 !cursor-not-allowed hover:bg-white' : '',
-      ]"
-      :data-index="index"
+      <IconUp
+        width="15px"
+        :class="{ 'fill-white': darkModeStore.isDarkMode }"
+      />
+    </ButtonField>
+    <ButtonField
+      size="small"
+      variant="text"
+      :disabled="index == max"
       @click="TodoStore.moveDown(index)"
+      :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
     >
-      <IconDown width=" 15px" />
-    </button>
-    <button :class="styleButton" @click="handleDetails">
-      <IconMenu width="15px" />
-    </button>
-    <button :class="styleButton" @click="handleEdit">
-      <IconEdit width="15px" />
-    </button>
+      <IconDown
+        width="15px"
+        :class="{ 'fill-white': darkModeStore.isDarkMode }"
+      />
+    </ButtonField>
+    <ButtonField
+      size="small"
+      variant="text"
+      @click="handleDetails"
+      :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
+    >
+      <IconMenu
+        width="15px"
+        :class="{ 'fill-white': darkModeStore.isDarkMode }"
+      />
+    </ButtonField>
+    <ButtonField
+      size="small"
+      variant="text"
+      :to="`${ROUTES.EDIT_TODO.replace(':id', id)}`"
+      :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
+    >
+      <IconEdit
+        width="15px"
+        :class="{ 'fill-white': darkModeStore.isDarkMode }"
+      />
+    </ButtonField>
   </div>
 </template>

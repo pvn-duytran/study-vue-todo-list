@@ -1,13 +1,24 @@
 <script setup lang="ts">
-import Header from "./components/HeaderTodo.vue";
-import Footer from "./components/FooterTodo.vue";
-import ListTodo from "./components/ListTodo.vue";
+import HeaderTodo from "./components/HeaderTodo.vue";
 import DetailTodo from "./components/DetailTodo.vue";
 import { useTodoStore } from "./stores/TodoStore";
-import { Teleport, Transition } from "vue";
-import FormTodo from "./components/FormTodo.vue";
+import { useAuthStore } from "./stores/AuthStore";
+import { Transition, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { ROUTES } from "./config";
 
 const TodoStore = useTodoStore();
+const AuthStore = useAuthStore();
+const router = useRouter();
+
+onMounted(() => {
+  AuthStore.checkLogin();
+  if (!AuthStore.isLogin) {
+    router.push(ROUTES.LOGIN);
+  } else {
+    router.push(ROUTES.TODO);
+  }
+});
 </script>
 
 <template>
@@ -16,17 +27,11 @@ const TodoStore = useTodoStore();
       class="w-[700px] m-auto rounded-[5px] shadow-md border-t-[5px] border-solid border-black relative"
     >
       <Notifications position="top center" />
-      <Header />
-      <ListTodo />
-      <Footer />
-      <Teleport to="body">
-        <Transition>
-          <DetailTodo v-if="TodoStore.activePopup" />
-        </Transition>
-        <Transition>
-          <FormTodo v-if="TodoStore.activeForm" />
-        </Transition>
-      </Teleport>
+      <HeaderTodo />
+      <router-view></router-view>
+      <Transition>
+        <DetailTodo v-if="TodoStore.activePopup" />
+      </Transition>
     </div>
   </section>
 </template>

@@ -8,6 +8,7 @@ type Todo = {
   completed: boolean;
   hide_description: boolean;
   description: string;
+  user_id: string;
 };
 export const useTodoStore = defineStore({
   id: "todo",
@@ -43,47 +44,6 @@ export const useTodoStore = defineStore({
     },
   },
   actions: {
-    async getTodos() {
-      try {
-        const response = await apiService.getItems();
-        this.todos = response;
-      } catch (error) {
-        console.error("Error fetching todos:", error);
-      }
-    },
-    async updateTodo(id: string, data: Todo) {
-      try {
-        const newData = await apiService.updateItem(id, data);
-        return newData;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async deleteTodo(id: string) {
-      try {
-        const data = await apiService.deleteItem(id);
-        this.todos = this.todos.filter((todo: Todo) => todo.id != id);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async createTodo(data: Todo, title: string, type: string) {
-      try {
-        const response = await apiService.createItem(data);
-        this.todos.push(response);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        this.activeForm = false;
-        this.activePopup = false;
-        useNotification().notify({
-          title: title,
-          type: type,
-          speed: 1000,
-          duration: 2000,
-        });
-      }
-    },
     getDetailTodo(id: string) {
       this.todos.find((todo: Todo, index: number) => {
         if (todo.id == id) {
