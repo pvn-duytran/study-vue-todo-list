@@ -13,10 +13,12 @@ const router = useRouter();
 
 onMounted(() => {
   AuthStore.checkLogin();
+  const fullPathname = window.location.pathname;
   if (!AuthStore.isLogin) {
     router.push(ROUTES.LOGIN);
   } else {
-    router.push(ROUTES.TODO);
+    if (fullPathname == "/login" || fullPathname == "/register")
+      router.push(ROUTES.TODO);
   }
 });
 </script>

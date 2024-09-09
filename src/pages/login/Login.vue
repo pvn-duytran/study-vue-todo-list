@@ -3,7 +3,6 @@ import ButtonField from "../../components/Button/ButtonField.vue";
 import TextField from "../../components/Input/TextField.vue";
 import { auth } from "@/firebaseConfig";
 import { useAuthStore } from "@/stores/AuthStore";
-import { reactive } from "vue";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Cookies from "js-cookie";
 import { useNotification } from "@kyvg/vue3-notification";
