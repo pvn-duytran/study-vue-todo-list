@@ -5,9 +5,9 @@ import ButtonField from "./Button/ButtonField.vue";
 import { ROUTES } from "@/config";
 import TextField from "./Input/TextField.vue";
 import { useAuthStore } from "@/stores/AuthStore";
-import { useForm } from "vee-validate";
-
+import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
+import debounce from "lodash/debounce";
 
 type Todo = {
   id: string;
@@ -25,9 +25,23 @@ const { errors, handleSubmit, defineField } = useForm({
     description: yup.string().min(7).required(),
   }),
 });
-const [name, nameAttrs] = defineField("name");
-const [description, descriptionAttrs] = defineField("description");
 
+const {
+  value: name,
+  errorMessage: nameError,
+  handleChange: handleNameChange,
+} = useField("name");
+const {
+  value: description,
+  errorMessage: descriptionError,
+  handleChange: handleDescriptionChange,
+} = useField("description");
+
+const debouncedHandleNameChange = debounce(handleNameChange, 1000);
+const debouncedHandleDescriptionChange = debounce(
+  handleDescriptionChange,
+  1000
+);
 const formData = reactive<Todo>({
   id: uuidv4(),
   name: "",
@@ -54,11 +68,11 @@ const handleAdd = handleSubmit(async (values) => {
       <h2 class="text-xl font-bold text-center">ADD</h2>
       <div class="mb-4">
         <TextField
-          v-bind="nameAttrs"
-          v-model="name"
+          v-model="formData.name"
           label="Text"
           placeholder="Enter text..."
           class="!m-0"
+          @input="debouncedHandleNameChange"
         />
         <span class="text-[14px] italic text-[red]">{{ errors.name }}</span>
       </div>
@@ -68,10 +82,10 @@ const handleAdd = handleSubmit(async (values) => {
           label="Description"
           placeholder="Enter description..."
           class="!m-0"
-          v-bind="descriptionAttrs"
-          v-model="description"
+          v-model="formData.description"
           :multiline="true"
           :rows="2"
+          @input="debouncedHandleDescriptionChange"
         />
         <span class="text-[14px] italic text-[red]">{{
           errors.description
@@ -89,7 +103,7 @@ const handleAdd = handleSubmit(async (values) => {
         </ButtonField>
         <ButtonField
           class="w-full"
-          :to="`${ROUTES.HOME}`"
+          :to="`${ROUTES.TODO}`"
           size="medium"
           variant="outlined"
           >Cancel</ButtonField

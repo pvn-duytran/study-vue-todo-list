@@ -63,7 +63,7 @@ watch(
     deep: true,
   }
 );
-const goToPage = (page) => {
+const goToPage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     router.push({ path: "/todos", query: { page } });
   }
@@ -71,9 +71,18 @@ const goToPage = (page) => {
 watch(
   () => route.query.page,
   (newPage) => {
+    console.log(currentPage.value);
     currentPage.value = Number(newPage) || 1;
   }
 );
+const pageNumbers = computed(() => {
+  const pages = [];
+  for (let i = 1; i <= totalPages.value; i++) {
+    pages.push(i);
+  }
+  console.log(pages);
+  return pages;
+});
 </script>
 
 <template>
@@ -105,11 +114,11 @@ watch(
       </template>
     </template>
   </ul>
-  <div class="flex justify-center mt-4 pagination">
+  <div class="flex justify-center gap-2 mt-4 pagination">
     <ButtonField
       size="small"
       variant="text"
-      :disabled="currentPage === 0"
+      :disabled="currentPage === 1"
       class="rotate-90"
       :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
       @click="goToPage(currentPage - 1)"
@@ -119,7 +128,15 @@ watch(
         :class="{ 'fill-white': darkModeStore.isDarkMode }"
       />
     </ButtonField>
-    <span>{{ currentPage }}</span>
+    <button
+      v-for="page in pageNumbers"
+      :key="page"
+      @click="goToPage(page)"
+      :class="{ 'bg-black text-white': page === currentPage }"
+      class="flex px-3 py-1 border border-solid"
+    >
+      {{ page }}
+    </button>
     <ButtonField
       size="small"
       class="rotate-90"

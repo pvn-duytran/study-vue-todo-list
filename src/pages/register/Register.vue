@@ -8,8 +8,9 @@ import Cookies from "js-cookie";
 import { useNotification } from "@kyvg/vue3-notification";
 import { ROUTES } from "@/config";
 import { useRouter } from "vue-router";
-import { useForm } from "vee-validate";
+import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
+import debounce from "lodash/debounce";
 
 const { notify } = useNotification();
 const AuthStore = useAuthStore();
@@ -21,8 +22,19 @@ const { errors, handleSubmit, defineField } = useForm({
     password: yup.string().min(6).required(),
   }),
 });
-const [email, emailAttrs] = defineField("email");
-const [password, passwordAttrs] = defineField("password");
+const {
+  value: email,
+  errorMessage: emailError,
+  handleChange: handleEmailChange,
+} = useField("email");
+const {
+  value: password,
+  errorMessage: passwordError,
+  handleChange: handlePasswordChange,
+} = useField("password");
+
+const debouncedHandleEmailChange = debounce(handleEmailChange, 1000);
+const debouncedHandlePasswordChange = debounce(handlePasswordChange, 1000);
 const handleRegister = handleSubmit(async (values) => {
   const formData = values;
   try {
@@ -53,24 +65,22 @@ const handleRegister = handleSubmit(async (values) => {
       <h2 class="text-xl font-bold text-center">REGISTER</h2>
       <div class="mb-4">
         <TextField
-          v-bind="emailAttrs"
-          v-model="email"
           label="Email"
           placeholder="Enter email..."
           type="email"
           class="!m-0"
+          @input="debouncedHandleEmailChange"
         />
         <span class="text-[14px] italic text-[red]">{{ errors.email }}</span>
       </div>
 
       <div class="mb-4">
         <TextField
-          v-bind="passwordAttrs"
-          v-model="password"
           label="Password"
           placeholder="Enter password..."
           type="password"
           class="!m-0"
+          @input="debouncedHandlePasswordChange"
         />
         <span class="text-[14px] italic text-[red]">{{ errors.password }}</span>
       </div>
