@@ -63,6 +63,7 @@ watch(
     deep: true,
   }
 );
+
 const goToPage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     router.push({ path: "/todos", query: { page } });
@@ -83,10 +84,27 @@ const pageNumbers = computed(() => {
   console.log(pages);
   return pages;
 });
+
+let draggedItemIndex = null;
+
+const onDragStart = (index: number) => {
+  draggedItemIndex = index;
+};
+const onDrop = (index: number) => {
+  console.log("onDrop", index);
+  if (draggedItemIndex !== null && draggedItemIndex !== index) {
+    const draggedItem = todos.value[draggedItemIndex];
+    todos.value.splice(draggedItemIndex, 1);
+    todos.value.splice(index, 0, draggedItem);
+  }
+  draggedItemIndex = null;
+};
 </script>
 
 <template>
-  <ul
+  <TransitionGroup
+    name="fade"
+    tag="ul"
     class="p-[20px] pr-[10px] border-y border-solid border-[#b6b5b5] grid gap-2"
     :class="{ 'dark:bg-black': darkModeStore.isDarkMode }"
   >
@@ -105,6 +123,10 @@ const pageNumbers = computed(() => {
           :index="index"
           :id="todo.id"
           :key="todo.name"
+          draggable="true"
+          @dragstart="onDragStart(index)"
+          @dragover.prevent
+          @drop="onDrop(index)"
         />
       </template>
       <template v-else>
@@ -113,42 +135,19 @@ const pageNumbers = computed(() => {
         </p>
       </template>
     </template>
-  </ul>
-  <div class="flex justify-center gap-2 mt-4 pagination">
-    <ButtonField
-      size="small"
-      variant="text"
-      :disabled="currentPage === 1"
-      class="rotate-90"
-      :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
-      @click="goToPage(currentPage - 1)"
-    >
-      <IconDown
-        width="15px"
-        :class="{ 'fill-white': darkModeStore.isDarkMode }"
-      />
-    </ButtonField>
-    <button
-      v-for="page in pageNumbers"
-      :key="page"
-      @click="goToPage(page)"
-      :class="{ 'bg-black text-white': page === currentPage }"
-      class="flex px-3 py-1 border border-solid"
-    >
-      {{ page }}
-    </button>
-    <ButtonField
-      size="small"
-      class="rotate-90"
-      variant="text"
-      :disabled="currentPage === totalPages"
-      :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
-      @click="goToPage(currentPage + 1)"
-    >
-      <IconUp
-        width="15px"
-        :class="{ 'fill-white': darkModeStore.isDarkMode }"
-      />
-    </ButtonField>
-  </div>
+  </TransitionGroup>
 </template>
+<style scoped>
+li {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
