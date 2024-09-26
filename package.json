@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^3.2.1",
+    "@pinia/testing": "^0.1.5",
     "axios": "^1.7.3",
     "debounce": "^2.1.0",
     "firebase": "^10.13.0",

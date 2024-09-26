@@ -1,6 +1,4 @@
 import { defineStore } from "pinia";
-import { apiService } from "../apiService";
-import { useNotification } from "@kyvg/vue3-notification";
 
 type Todo = {
   id: string;
