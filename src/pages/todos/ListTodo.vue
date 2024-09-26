@@ -136,6 +136,43 @@ const onDrop = (index: number) => {
       </template>
     </template>
   </TransitionGroup>
+  <div class="flex justify-center gap-2 mt-4 pagination">
+    <ButtonField
+      size="small"
+      variant="text"
+      :disabled="currentPage === 1"
+      class="rotate-90"
+      :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
+      @click="goToPage(currentPage - 1)"
+    >
+      <IconDown
+        width="15px"
+        :class="{ 'fill-white': darkModeStore.isDarkMode }"
+      />
+    </ButtonField>
+    <button
+      v-for="page in pageNumbers"
+      :key="page"
+      @click="goToPage(page)"
+      :class="{ 'bg-black text-white': page === currentPage }"
+      class="flex px-3 py-1 border border-solid"
+    >
+      {{ page }}
+    </button>
+    <ButtonField
+      size="small"
+      class="rotate-90"
+      variant="text"
+      :disabled="currentPage === totalPages"
+      :class="{ 'hover:!bg-gray-600': darkModeStore.isDarkMode }"
+      @click="goToPage(currentPage + 1)"
+    >
+      <IconUp
+        width="15px"
+        :class="{ 'fill-white': darkModeStore.isDarkMode }"
+      />
+    </ButtonField>
+  </div>
 </template>
 <style scoped>
 li {
