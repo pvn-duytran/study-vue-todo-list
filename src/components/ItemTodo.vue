@@ -51,7 +51,7 @@ watch(
 </script>
 
 <template>
-  <li class="flex items-center justify-between gap-[50px]">
+  <li class="flex items-center justify-between gap-[50px] cursor-move">
     <div class="flex items-center gap-[10px] justify-between w-full">
       <button @click="handleChecked">
         <IconChecked
