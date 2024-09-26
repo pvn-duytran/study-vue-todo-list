@@ -25,10 +25,9 @@ const handleAdd = async (data: Todo) => {
       text: "Todo has been added",
       type: "success",
     });
+    router.push(ROUTES.TODO);
   } catch (error) {
     console.log(error);
-  } finally {
-    router.push(ROUTES.TODO);
   }
 };
 </script>

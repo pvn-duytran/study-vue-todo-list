@@ -48,13 +48,6 @@ const handleEdit = handleSubmit(async (values) => {
     description: newData.description,
   };
   emit("submit", data);
-  // await apiService.updateItem(id, data);
-  // notify({
-  //   title: "Success",
-  //   text: "Todo has been updated",
-  //   type: "success",
-  // });
-  // router.push(ROUTES.TODO);
 });
 </script>
 <template>

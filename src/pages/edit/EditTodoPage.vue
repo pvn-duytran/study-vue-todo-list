@@ -28,6 +28,7 @@ const handleEdit = async (data: Todo) => {
   router.push(ROUTES.TODO);
 };
 </script>
+
 <template>
   <EditTodo @submit="handleEdit" />
 </template>

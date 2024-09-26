@@ -55,7 +55,7 @@ const filtersTodo = computed(() => {
 });
 
 watch(
-  () => TodoStore.todos,
+  () => TodoStore.todos || [],
   (newValue) => {
     todos.value = newValue;
   },
